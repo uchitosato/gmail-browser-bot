@@ -1,3 +1,3 @@
-import datetime
+from src.utilities.constants import MY_CONSTANT
 
-print(datetime.datetime.now())
+print(MY_CONSTANT)
