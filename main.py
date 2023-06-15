@@ -12,7 +12,7 @@ def main():
     driver.get("https://www/python.org")
     time.sleep(30)
     # driver.find_element("Connect Wallet")
-    # print(MY_CONSTANT)
+    print(MY_CONSTANT)
 
 if __name__ == '__main__':
     main()
