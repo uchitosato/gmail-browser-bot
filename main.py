@@ -1,6 +1,6 @@
 import time
 
-from selenium import webdriver
+from seleniumwire import webdriver
 from src.utilities.constants import MY_CONSTANT, PASSWORD, GMAIL_ADDRESS
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
