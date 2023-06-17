@@ -20,11 +20,8 @@ def main():
     passord_input = driver.find_element(by=By.NAME, value="Password")
     time.sleep(0.5)
     passord_input.send_keys(PASSWORD)
-    time.sleep(0.5)
     password_next = driver.find_element(by=By.ID, value="passwordNext")
-    time.sleep(0.5)
     password_next.click()
-    time.sleep(100)
 
 
 if __name__ == '__main__':
