@@ -1,3 +1,3 @@
 MY_CONSTANT = 2000
-GMAIL_ADDRESS = "afoucher7255@gmail.com"
-PASSWORD = "aksuifaksuif"
+GMAIL_ADDRESS = "emmanuelbamaiyi9098@gmail.com"
+PASSWORD = "Wxpnsoxzqmhi"
