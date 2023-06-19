@@ -18,6 +18,6 @@ def driver_chrome_incognito(proxy_ip):
     chrome_options.add_argument("--ignore-certificate-errors")  # Ignore certificate errors
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument('--proxy-server={}:{}'.format(proxy_ip, proxy_port))
-
+    # Add your additional options
     driver = webdriver.Chrome(options=chrome_options)
     return driver
