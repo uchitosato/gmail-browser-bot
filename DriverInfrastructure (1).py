@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-
+# login to google account
 def driver_chrome_incognito(proxy_ip):
 
     proxy_port = 3128
