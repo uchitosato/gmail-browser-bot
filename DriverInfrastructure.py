@@ -99,15 +99,20 @@ def send_mail(driver):
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
         try:
-            recipient = driver.find_element(by=By.CLASS_NAME, value="agP aFw")
-            recipient.send_keys("sdfsdf")
+            recipient = driver.find_element(by=By.ID, value=":gc")
+            recipient.send_keys("uchitosato@gmail.com")
             try:
-                subject = driver.find_element(by=By.NAME, value="subject")
-                subject.send_keys("sdfsdfsdf")
+                subject = driver.find_element(by=By.NAME, value="subjectbox")
+                subject.send_keys("MY First Subject")
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
-                    msg_body.send_keys("sdfsdfsdfsf")
+                    msg_body.send_keys("Are you finding full stack jobs?")
+                    try:
+                        send_button = driver.find_element(by=By.ID, value=":c5")
+                        send_button.click()
+                    except:
+                        print("Cannot find send button")
                 except:
                     print("Cannot find msg body!")
             except:
