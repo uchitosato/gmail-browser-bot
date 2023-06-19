@@ -25,8 +25,13 @@ def login_to_google(email, password, recovery_email):
     time.sleep(1)
     next_button = driver.find_element(by=By.ID, value="identifierNext")
     next_button.click()
-    time.sleep(10)
-    print(email, password, recovery_email)
+
+    time.sleep(0.5)
+    passord_input = driver.find_element(by=By.NAME, value="Password")
+    time.sleep(0.5)
+    passord_input.send_keys(PASSWORD)
+    password_next = driver.find_element(by=By.ID, value="passwordNext")
+    password_next.click()
 
 def main():
     for i in range(0, number_of_senders):
