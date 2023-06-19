@@ -1,8 +1,9 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import time
 
 
 def driver_chrome_incognito():
@@ -98,7 +99,7 @@ def send_mail(driver):
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
         try:
-            recipient = driver.find_element(by=By.CLASS_NAME, value="//input[@class='agP aFw']")
+            recipient = driver.find_element(by=By.CLASS_NAME, value="agP aFw")
             recipient.send_keys("sdfsdf")
             try:
                 subject = driver.find_element(by=By.NAME, value="subject")
