@@ -15,7 +15,6 @@ sender = []
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
 senders_list = senders_file.sheet_by_index(0)
 number_of_senders = senders_list.nrows
-options = Options
 
 def driver_chrome_incognito():
     chrome_options = Options()
@@ -110,7 +109,7 @@ def send_mail(driver):
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
         try:
-            recipient = driver.find_element(by=By.ID, value=":gc")
+            recipient = driver.find_element(by=By.XPATH, value="//input[@class='agP aFw']")
             recipient.send_keys(RECIPIENT_ADDRESS)
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
@@ -120,7 +119,7 @@ def send_mail(driver):
                     time.sleep(1)
                     msg_body.send_keys("Are you finding full stack jobs?")
                     try:
-                        send_button = driver.find_element(by=By.ID, value=":c5")
+                        send_button = driver.find_element(by=By.XPATH, value="//div[@class='T-I J-J5-Ji aoO v7 T-I-atl L3']")
                         send_button.click()
                     except:
                         print("Cannot find send button")
