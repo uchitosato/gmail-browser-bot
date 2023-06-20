@@ -1,7 +1,11 @@
 import time
 import xlrd
+import smtplib, ssl, threading, time
+import poplib
+import random
 
-import time
+from email.parser import Parser
+from email.message import EmailMessage
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -36,7 +40,10 @@ def driver_chrome_incognito():
     return driver
 
 
-def login_to_gmail(driver, email, password, recovery_email):
+def login_to_gmail(driver, index):
+    email = senders_list.cell_value(index, 0)
+    password = senders_list.cell_value(index, 1)
+    recovery_email = senders_list.cell_value(index,2)
     driver.get("https://google.com/accounts/Login")
     time.sleep(1)
     try:
@@ -133,17 +140,54 @@ def send_mail(driver):
         print("Cannot find 'Compose' button'!")
     return driver
 
+def get_email(str):
+    try:
+        start = str.index('<')
+        end = str.index('>')
+        return str[start + 1: end]
+    except ValueError:
+        return str
 
-def main():
+def pop3_receiver(pop_user, pop_password, index):
+    time.sleep(30)
+    user = pop_user
+    password = pop_password
+
+    while True:
+        try:
+            pop3 = poplib.POP3_SSL(POP3_SERVER)
+            pop3.user(user)
+            pop3.pass_(password)
+            items = pop3.list()[1]
+            ids = [int(item.split()[0]) for item in items]
+            for id in ids:
+                text = pop3.retr(id)[1]
+                text = b'\r\n'.join(text).decode('utf-8')
+
+                msg = Parser().parsestr(text)
+                sender = get_email(msg['From'])
+                receiver = get_email(msg['To'])
+                subject = msg['Subject']
+                if receiver == user and sender == "uchitosato@gmail.com":
+                    pop_driver = driver_chrome_incognito()
+                    send_mail(login_to_gmail(driver=pop_driver, index=index))
+                    time.sleep(10)
+        except Exception as e:
+            print('pop3_receiver: ', e)
+        time.sleep(POP3_INTERVAL)
+
+def send_in_loop():
     for i in range(0, number_of_senders):
-        email = senders_list.cell_value(i, 0)
-        password = senders_list.cell_value(i, 1)
-        recovery_email = senders_list.cell_value(i,2)
         driver = driver_chrome_incognito()
         time.sleep(1)
-        send_mail(login_to_gmail(driver=driver, email=email, password=password, recovery_email=recovery_email))
+        send_mail(login_to_gmail(driver=driver, index=i))
         time.sleep(10)
         driver.close()
+
+def main():
+    thread_sender = threading.Thread(target=send_in_loop)
+    thread_sender.start()
+    thread_sender.join()
 
 if __name__ == '__main__':
     main()
