@@ -1,5 +1,5 @@
 MY_CONSTANT = 2000
-RECIPIENT_ADDRESS = "emmanuelbamaiyi9098@gmail.com"
+RECIPIENT_ADDRESS = "uchitosato@gmail.com"
 RECIPIENT_PASSWORD = "Wxpnsoxzqmhi"
 
 SMTP_SERVER = "smtp.gmail.com"
