@@ -26,6 +26,7 @@ def driver_chrome_incognito():
 
     driver = webdriver.Chrome(options=chrome_options)
     return driver
+
 def login_to_gmail(driver):
     driver.get("https://google.com/accounts/Login")
     time.sleep(1)
@@ -122,6 +123,7 @@ def send_mail(driver):
     except:
         print("Cannot find 'Compose' button'!")
     return driver
+
 driver = driver_chrome_incognito()
 time.sleep(1)
 gmail_driver = login_to_gmail(driver)
