@@ -144,6 +144,7 @@ def main():
         time.sleep(1)
         send_mail(login_to_gmail(driver=driver, email=email, password=password, recovery_email=recovery_email))
         time.sleep(10)
+        driver.close()
 
 if __name__ == '__main__':
     main()

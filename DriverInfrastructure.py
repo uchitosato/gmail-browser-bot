@@ -104,11 +104,11 @@ def send_mail(driver):
             recipient.send_keys("uchitosato@gmail.com")
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
-                subject.send_keys("MY First Subject")
+                subject.send_keys("Coris Team")
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
-                    msg_body.send_keys("Are you finding full stack jobs?")
+                    msg_body.send_keys("Are you finding full stack jobs?\nIf that's true, Contact me Coris#897 (discord).\nRegards.")
                     try:
                         send_button = driver.find_element(by=By.ID, value=":c5")
                         send_button.click()
@@ -124,11 +124,27 @@ def send_mail(driver):
         print("Cannot find 'Compose' button'!")
     return driver
 
+def sign_out(driver):
+    try:
+        account_button = driver.find_element(by=By.XPATH, value="//a[@class='gb_d gb_Fa gb_x']")
+        account_button.click()
+        try:
+            sign_out_button = driver.find_element(by=By.XPATH, value="//a[@class='V5tzAf jFfZdd']")
+            sign_out_button.click()
+        except:
+            print("Cannot find sign out button!")
+    except:
+        print("Cannot find account button!")
+    time.sleep(5)    
+    return driver
+
+
 driver = driver_chrome_incognito()
 time.sleep(1)
 gmail_driver = login_to_gmail(driver)
 sender_driver = send_mail(gmail_driver)
+time.sleep(5)
+sign_out_driver = sign_out(sender_driver)
+time.sleep(5)
+sign_out_driver.close()
 time.sleep(1000)
-
-
-
