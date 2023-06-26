@@ -34,7 +34,7 @@ def login_to_gmail(driver):
         input_email = driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
         email_next = driver.find_element(by=By.ID, value="identifierNext")
         time.sleep(1)
-        input_email.send_keys("premiumbhai603@gmail.com")
+        input_email.send_keys("azubikeemmanuel200@gmail.com")
         time.sleep(1)
         email_next.click()
         time.sleep(1)
@@ -42,7 +42,7 @@ def login_to_gmail(driver):
             input_password = driver.find_element(by=By.NAME, value="Passwd")
             password_Next = driver.find_element(by=By.ID, value="passwordNext")
             time.sleep(1)
-            input_password.send_keys("Xqkfqjqfmchu")
+            input_password.send_keys("Wylrzdaeggcm")
             time.sleep(1)
             password_Next.click()
             time.sleep(1)
@@ -53,7 +53,7 @@ def login_to_gmail(driver):
                 time.sleep(1)
                 try:
                     input_recovery_email = driver.find_element(by=By.ID, value="knowledge-preregistered-email-response")
-                    input_recovery_email.send_keys("kcgnsbfviipj826896@kaishime.com")
+                    input_recovery_email.send_keys("kzapelhaqhsz451556@kaishime.com")
                     input_recovery_email.send_keys(Keys.ENTER)
                     time.sleep(1)
                     try:
@@ -100,17 +100,17 @@ def send_mail(driver):
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
         try:
-            recipient = driver.find_element(by=By.ID, value=":gc")
+            recipient = driver.find_element(by=By.XPATH, value="//input[@class='agP aFw']")
             recipient.send_keys("uchitosato@gmail.com")
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
-                subject.send_keys("Coris Team")
+                subject.send_keys("MY First Subject")
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
-                    msg_body.send_keys("Are you finding full stack jobs?\nIf that's true, Contact me Coris#897 (discord).\nRegards.")
+                    msg_body.send_keys("Are you finding full stack jobs?")
                     try:
-                        send_button = driver.find_element(by=By.ID, value=":c5")
+                        send_button = driver.find_element(by=By.XPATH, value="//div[@class='T-I J-J5-Ji aoO v7 T-I-atl L3']")
                         send_button.click()
                     except:
                         print("Cannot find send button")
@@ -138,13 +138,38 @@ def sign_out(driver):
     time.sleep(5)    
     return driver
 
+def watch_unread_gmails(driver):
+    try:
+        inbox_button = driver.find_element(by=By.XPATH, value="//div[@class='aio UKr6le']")
+        print("found!!!")
+        inbox_button.click()
+        print("clicked!!!")
+        try:
+            unread_gmails = driver.find_elements(by=By.XPATH, value="//tr[@class='zA zE']")
+            print("find class")
+            for email in unread_gmails:
+                email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text
+                email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
+                if email_sender == "uchitosato@gmail.com":
+                    send_mail(driver=driver)
+                email.click()
+                # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
+                print(email_subject, email_sender)
+                time.sleep(1000)
+        except:
+            print("cannot find such class!")
+            time.sleep(1000)
+    except:
+        print("cannot find inbox button")
 
 driver = driver_chrome_incognito()
 time.sleep(1)
 gmail_driver = login_to_gmail(driver)
 sender_driver = send_mail(gmail_driver)
 time.sleep(5)
-sign_out_driver = sign_out(sender_driver)
+read_driver = watch_unread_gmails(sender_driver)
+time.sleep(5)
+sign_out_driver = sign_out(read_driver)
 time.sleep(5)
 sign_out_driver.close()
 time.sleep(1000)
