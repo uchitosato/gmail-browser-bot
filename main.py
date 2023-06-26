@@ -1,7 +1,6 @@
 import time
 import xlrd
-import smtplib, ssl, threading, time
-import poplib
+import threading, time
 import random
 
 from email.parser import Parser
@@ -13,10 +12,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from src.utilities.constants import MY_CONSTANT, RECIPIENT_PASSWORD, RECIPIENT_ADDRESS, SMTP_SERVER, SMTP_INTERVAL, POP3_SERVER, POP3_INTERVAL
-from src.utilities.select_message_for_sending import select_random_msg, RECIPIENTS
+from src.utilities.select_message_for_sending import select_random_msg, read_file_line_by_line
 # driver = webdriver.Chrome()
 
 sender = []
+links = read_file_line_by_line("./assets/txt/links test.txt")
+recipients = read_file_line_by_line("./assets/txt/recipients test.txt")
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
 senders_list = senders_file.sheet_by_index(0)
 number_of_senders = senders_list.nrows
@@ -113,17 +114,19 @@ def login_to_gmail(driver, index):
             print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
     return driver
 
-def send_mail(driver, msg_content):
+def send_mail(driver, msg_content, recipient_email):
     try:
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
         try:
             recipient = driver.find_element(by=By.XPATH, value="//input[@class='agP aFw']")
-            recipient.send_keys(RECIPIENT_ADDRESS)
+            recipient.send_keys(recipient_email)
+            time.sleep(1)
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
-                subject_content ='{0}'.format(RECIPIENT_ADDRESS.split('@')[0])
+                subject_content ='{0}'.format(recipient_email.split('@')[0])
                 subject.send_keys(subject_content)
+                time.sleep(1)
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
@@ -159,10 +162,10 @@ def watch_unread_gmails(index):
                 for email in unread_gmails:
                     email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text
                     email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
-                    if email_sender in RECIPIENTS:
-                        send_mail(driver=driver, msg_content=select_random_msg("./assets/txt/Reply Message 200 Eng.txt"))
+                    if email_sender + '\n' in recipients:
+                        send_mail(driver=driver, msg_content=select_random_msg("./assets/txt/Reply Message 200 Eng.txt"), recipient_email=email_sender)
                         email.click()
-                        
+                        time.click(5)
                         inbox_button.click()
                     time.sleep(5)
                     # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
@@ -178,7 +181,7 @@ def send_in_loop():
     for i in range(0, number_of_senders):
         driver = driver_chrome_incognito()
         time.sleep(1)
-        send_mail(login_to_gmail(driver=driver, index=i), select_random_msg("./assets/txt/First Message 200 Eng.txt"))
+        send_mail(driver=login_to_gmail(driver=driver, index=i), msg_content=select_random_msg("./assets/txt/First Message 200 Eng.txt") + links[random.randrange(0, len(links))], recipient_email=recipients[len(recipients)-i-1])
         time.sleep(10)
         driver.close()
 
@@ -189,7 +192,7 @@ def main():
     thread_sender.join()
 
     for i in range(0, number_of_senders):
-        threading.Thread(target=watch_unread_gmails(i)).start()
+        threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
 
 if __name__ == '__main__':
     main()
