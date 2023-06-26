@@ -147,12 +147,16 @@ def watch_unread_gmails(driver):
         try:
             unread_gmails = driver.find_elements(by=By.XPATH, value="//tr[@class='zA zE']")
             print("find class")
+            time.sleep(5)
             for email in unread_gmails:
                 email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text
                 email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
                 if email_sender == "uchitosato@gmail.com":
                     send_mail(driver=driver)
-                email.click()
+                    email.click()
+                    
+                    inbox_button.click()
+                time.sleep(5)
                 # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
                 print(email_subject, email_sender)
                 time.sleep(1000)
