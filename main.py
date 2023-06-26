@@ -11,14 +11,16 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from src.utilities.constants import MY_CONSTANT, RECIPIENT_PASSWORD, RECIPIENT_ADDRESS, SMTP_SERVER, SMTP_INTERVAL, POP3_SERVER, POP3_INTERVAL
 
+from src.utilities.constants import MY_CONSTANT, RECIPIENT_PASSWORD, RECIPIENT_ADDRESS, SMTP_SERVER, SMTP_INTERVAL, POP3_SERVER, POP3_INTERVAL
+from src.utilities.select_message_for_sending import select_random_msg, RECIPIENTS
 # driver = webdriver.Chrome()
 
 sender = []
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
 senders_list = senders_file.sheet_by_index(0)
 number_of_senders = senders_list.nrows
+
 
 def driver_chrome_incognito():
     chrome_options = Options()
@@ -111,7 +113,7 @@ def login_to_gmail(driver, index):
             print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
     return driver
 
-def send_mail(driver):
+def send_mail(driver, msg_content):
     try:
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
@@ -120,11 +122,12 @@ def send_mail(driver):
             recipient.send_keys(RECIPIENT_ADDRESS)
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
-                subject.send_keys("MY First Subject")
+                subject_content ='{0}'.format(RECIPIENT_ADDRESS.split('@')[0])
+                subject.send_keys(subject_content)
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
-                    msg_body.send_keys("Are you finding full stack jobs?")
+                    msg_body.send_keys(msg_content)
                     try:
                         send_button = driver.find_element(by=By.XPATH, value="//div[@class='T-I J-J5-Ji aoO v7 T-I-atl L3']")
                         send_button.click()
@@ -140,25 +143,53 @@ def send_mail(driver):
         print("Cannot find 'Compose' button'!")
     return driver
 
+def watch_unread_gmails(index):
+    init_driver = driver_chrome_incognito()
+    while True:
+        driver = login_to_gmail(driver=init_driver, index=index)
+        try:
+            inbox_button = driver.find_element(by=By.XPATH, value="//div[@class='aio UKr6le']")
+            print("found!!!")
+            inbox_button.click()
+            print("clicked!!!")
+            try:
+                unread_gmails = driver.find_elements(by=By.XPATH, value="//tr[@class='zA zE']")
+                print("find class")
+                time.sleep(5)
+                for email in unread_gmails:
+                    email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text
+                    email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
+                    if email_sender in RECIPIENTS:
+                        send_mail(driver=driver, msg_content=select_random_msg("./assets/txt/Reply Message 200 Eng.txt"))
+                        email.click()
+                        
+                        inbox_button.click()
+                    time.sleep(5)
+                    # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
+                    print(email_subject, email_sender)
+                    driver.close()
+            except:
+                print("cannot find such class!")
+                driver.close()
+        except:
+            print("cannot find inbox button")
 
 def send_in_loop():
     for i in range(0, number_of_senders):
         driver = driver_chrome_incognito()
         time.sleep(1)
-        send_mail(login_to_gmail(driver=driver, index=i))
+        send_mail(login_to_gmail(driver=driver, index=i), select_random_msg("./assets/txt/First Message 200 Eng.txt"))
         time.sleep(10)
         driver.close()
 
-def listening_unread_emails():
-    for i in range(0, number_of_senders):
-        driver = driver_chrome_incognito()
-        time.sleep(1)
-        
 
 def main():
     thread_sender = threading.Thread(target=send_in_loop)
     thread_sender.start()
     thread_sender.join()
+
+    for i in range(0, number_of_senders):
+        threading.Thread(target=watch_unread_gmails(i)).start()
 
 if __name__ == '__main__':
     main()
