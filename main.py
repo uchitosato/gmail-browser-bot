@@ -148,33 +148,6 @@ def get_email(str):
     except ValueError:
         return str
 
-def pop3_receiver(pop_user, pop_password, index):
-    time.sleep(30)
-    user = pop_user
-    password = pop_password
-
-    while True:
-        try:
-            pop3 = poplib.POP3_SSL(POP3_SERVER)
-            pop3.user(user)
-            pop3.pass_(password)
-            items = pop3.list()[1]
-            ids = [int(item.split()[0]) for item in items]
-            for id in ids:
-                text = pop3.retr(id)[1]
-                text = b'\r\n'.join(text).decode('utf-8')
-
-                msg = Parser().parsestr(text)
-                sender = get_email(msg['From'])
-                receiver = get_email(msg['To'])
-                subject = msg['Subject']
-                if receiver == user and sender == "uchitosato@gmail.com":
-                    pop_driver = driver_chrome_incognito()
-                    send_mail(login_to_gmail(driver=pop_driver, index=index))
-                    time.sleep(10)
-        except Exception as e:
-            print('pop3_receiver: ', e)
-        time.sleep(POP3_INTERVAL)
 
 def send_in_loop():
     for i in range(0, number_of_senders):
