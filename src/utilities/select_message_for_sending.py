@@ -47,5 +47,3 @@ def select_random_msg(file):
           final_msg += components[random.randrange(0, components_length)]
       final_msg += tmp_msg[ends[len(starts)-1] + 1:]
   return final_msg
-
-RECIPIENTS = read_file_line_by_line("../../assets/txt/recipients.txt")
