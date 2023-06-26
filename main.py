@@ -1,7 +1,11 @@
 import time
 import xlrd
+import smtplib, ssl, threading, time
+import poplib
+import random
 
-import time
+from email.parser import Parser
+from email.message import EmailMessage
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -36,7 +40,10 @@ def driver_chrome_incognito():
     return driver
 
 
-def login_to_gmail(driver, email, password, recovery_email):
+def login_to_gmail(driver, index):
+    email = senders_list.cell_value(index, 0)
+    password = senders_list.cell_value(index, 1)
+    recovery_email = senders_list.cell_value(index,2)
     driver.get("https://google.com/accounts/Login")
     time.sleep(1)
     try:
@@ -133,17 +140,27 @@ def send_mail(driver):
         print("Cannot find 'Compose' button'!")
     return driver
 
+def get_email(str):
+    try:
+        start = str.index('<')
+        end = str.index('>')
+        return str[start + 1: end]
+    except ValueError:
+        return str
 
-def main():
+
+def send_in_loop():
     for i in range(0, number_of_senders):
-        email = senders_list.cell_value(i, 0)
-        password = senders_list.cell_value(i, 1)
-        recovery_email = senders_list.cell_value(i,2)
         driver = driver_chrome_incognito()
         time.sleep(1)
-        send_mail(login_to_gmail(driver=driver, email=email, password=password, recovery_email=recovery_email))
+        send_mail(login_to_gmail(driver=driver, index=i))
         time.sleep(10)
         driver.close()
+
+def main():
+    thread_sender = threading.Thread(target=send_in_loop)
+    thread_sender.start()
+    thread_sender.join()
 
 if __name__ == '__main__':
     main()
