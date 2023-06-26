@@ -2,6 +2,7 @@ import time
 import xlrd
 import threading, time
 import random
+import pyautogui
 
 from email.parser import Parser
 from email.message import EmailMessage
@@ -10,13 +11,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 from src.utilities.constants import MY_CONSTANT, RECIPIENT_PASSWORD, RECIPIENT_ADDRESS, SMTP_SERVER, SMTP_INTERVAL, POP3_SERVER, POP3_INTERVAL
 from src.utilities.select_message_for_sending import select_random_msg, read_file_line_by_line
 # driver = webdriver.Chrome()
 
 sender = []
-links = read_file_line_by_line("./assets/txt/links test.txt")
 recipients = read_file_line_by_line("./assets/txt/recipients test.txt")
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
 senders_list = senders_file.sheet_by_index(0)
@@ -115,6 +116,7 @@ def login_to_gmail(driver, index):
     return driver
 
 def send_mail(driver, msg_content, recipient_email):
+    print(msg_content)
     try:
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
@@ -124,16 +126,20 @@ def send_mail(driver, msg_content, recipient_email):
             time.sleep(1)
             try:
                 subject = driver.find_element(by=By.NAME, value="subjectbox")
-                subject_content ='{0}'.format(recipient_email.split('@')[0])
+                subject_content ='{0}'.format(recipient_email.split('@')[0]).strip()
                 subject.send_keys(subject_content)
                 time.sleep(1)
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
-                    msg_body.send_keys(msg_content)
+                    ActionChains(driver=driver).move_to_element(msg_body).click().perform()
+                    ActionChains(driver=driver).send_keys(msg_content).perform()
+                    time.sleep(5)
+                    print("entered message")
                     try:
                         send_button = driver.find_element(by=By.XPATH, value="//div[@class='T-I J-J5-Ji aoO v7 T-I-atl L3']")
                         send_button.click()
+                        print("successly sent")
                     except:
                         print("Cannot find send button")
                 except:
@@ -160,28 +166,30 @@ def watch_unread_gmails(index):
                 print("find class")
                 time.sleep(5)
                 for email in unread_gmails:
-                    email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text
+                    # email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text()
                     email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
-                    if email_sender + '\n' in recipients:
-                        send_mail(driver=driver, msg_content=select_random_msg("./assets/txt/Reply Message 200 Eng.txt"), recipient_email=email_sender)
-                        email.click()
-                        time.click(5)
-                        inbox_button.click()
-                    time.sleep(5)
+                    if email_sender in recipients:
+                        print("equal")
+                        reply_msg = select_random_msg("assets/txt/Reply Message 200 Eng.txt").split(":")[0] + " : " + select_random_msg("assets/txt/links test.txt")
+                        send_mail(driver=driver, msg_content=reply_msg, recipient_email=email_sender)
+                        print("replied!!!")
+                        ActionChains(driver=driver).move_to_element(email).click().perform()
+                        time.click(1)
+                        print(email_sender)
+                    time.sleep(1)
                     # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
-                    print(email_subject, email_sender)
-                    driver.close()
             except:
                 print("cannot find such class!")
-                driver.close()
         except:
             print("cannot find inbox button")
 
 def send_in_loop():
-    for i in range(0, number_of_senders):
+    for i in range(0, 3):
         driver = driver_chrome_incognito()
         time.sleep(1)
-        send_mail(driver=login_to_gmail(driver=driver, index=i), msg_content=select_random_msg("./assets/txt/First Message 200 Eng.txt") + links[random.randrange(0, len(links))], recipient_email=recipients[len(recipients)-i-1])
+        login_driver = login_to_gmail(driver=driver, index=i)
+        msg_content = select_random_msg("assets/txt/First Message 200 Eng.txt")
+        send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[i].strip())
         time.sleep(10)
         driver.close()
 
@@ -191,7 +199,8 @@ def main():
     thread_sender.start()
     thread_sender.join()
 
-    for i in range(0, number_of_senders):
+    for i in range(0, 3):
+        time.sleep(10)
         threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
 
 if __name__ == '__main__':
