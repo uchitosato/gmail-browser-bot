@@ -168,14 +168,14 @@ def watch_unread_gmails(index):
                 for email in unread_gmails:
                     # email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text()
                     email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
-                    if email_sender in recipients:
+                    print(email_sender)
+                    if email_sender.strip() + '\n' in recipients:
                         print("equal")
                         reply_msg = select_random_msg("assets/txt/Reply Message 200 Eng.txt").split(":")[0] + " : " + select_random_msg("assets/txt/links test.txt")
                         send_mail(driver=driver, msg_content=reply_msg, recipient_email=email_sender)
                         print("replied!!!")
                         ActionChains(driver=driver).move_to_element(email).click().perform()
                         time.click(1)
-                        print(email_sender)
                     time.sleep(1)
                     # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
             except:
