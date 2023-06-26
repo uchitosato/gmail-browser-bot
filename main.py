@@ -140,14 +140,6 @@ def send_mail(driver):
         print("Cannot find 'Compose' button'!")
     return driver
 
-def get_email(str):
-    try:
-        start = str.index('<')
-        end = str.index('>')
-        return str[start + 1: end]
-    except ValueError:
-        return str
-
 
 def send_in_loop():
     for i in range(0, number_of_senders):
@@ -156,6 +148,12 @@ def send_in_loop():
         send_mail(login_to_gmail(driver=driver, index=i))
         time.sleep(10)
         driver.close()
+
+def listening_unread_emails():
+    for i in range(0, number_of_senders):
+        driver = driver_chrome_incognito()
+        time.sleep(1)
+        
 
 def main():
     thread_sender = threading.Thread(target=send_in_loop)
