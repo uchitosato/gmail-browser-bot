@@ -45,6 +45,7 @@ def driver_chrome_incognito():
 
 
 def login_to_gmail(driver, index):
+    relogin_driver = driver
     email = senders_list.cell_value(index, 0)
     password = senders_list.cell_value(index, 1)
     recovery_email = senders_list.cell_value(index,2)
@@ -81,36 +82,37 @@ def login_to_gmail(driver, index):
                         not_now_button.click()
                         time.sleep(1)
                         try:
-                            driver.get("https://mail.google.com")
+                            driver.get("https://mail.google.com/mail/u/0/#inbox")
                         except:
                             print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
                     except:
                         try:
-                            driver.get("https://mail.google.com")
+                            driver.get("https://mail.google.com/mail/u/0/#inbox")
                         except:
                             print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
                         print("There is no 'Not now' button!")
                 except:
                     print("Cannot find element 'input_recovery_email'")
                     try:
-                        driver.get("https://mail.google.com")
+                        driver.get("https://mail.google.com/mail/u/0/#inbox")
                     except:
                         print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
             except:
                 print("There is no element have ID 'knowledge-preregistered-email-response'")
                 try:
-                    driver.get("https://mail.google.com")
+                    driver.get("https://mail.google.com/mail/u/0/#inbox")
                 except:
                     print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
         except:
             print("There is no element named 'Passwd'")
+            login_to_gmail(driver=relogin_driver, index=index)
             try:
-                driver.get("https://mail.google.com")
+                driver.get("https://mail.google.com/mail/u/0/#inbox")
             except:
                 print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
     except:
         try:
-            driver.get("https://mail.google.com")
+            driver.get("https://mail.google.com/mail/u/0/#inbox")
         except:
             print("Cannot find url 'mail.google.com!!!!!!!!!!!!'")
     return driver
@@ -134,7 +136,7 @@ def send_mail(driver, msg_content, recipient_email):
                     time.sleep(1)
                     ActionChains(driver=driver).move_to_element(msg_body).click().perform()
                     ActionChains(driver=driver).send_keys(msg_content).perform()
-                    time.sleep(5)
+                    time.sleep(2)
                     print("entered message")
                     try:
                         send_button = driver.find_element(by=By.XPATH, value="//div[@class='T-I J-J5-Ji aoO v7 T-I-atl L3']")
@@ -154,17 +156,18 @@ def send_mail(driver, msg_content, recipient_email):
 
 def watch_unread_gmails(index):
     init_driver = driver_chrome_incognito()
+    driver = login_to_gmail(driver=init_driver, index=index)
     while True:
-        driver = login_to_gmail(driver=init_driver, index=index)
         try:
             inbox_button = driver.find_element(by=By.XPATH, value="//div[@class='aio UKr6le']")
             print("found!!!")
             inbox_button.click()
             print("clicked!!!")
+            time.sleep(10)
             try:
                 unread_gmails = driver.find_elements(by=By.XPATH, value="//tr[@class='zA zE']")
                 print("find class")
-                time.sleep(5)
+                time.sleep(1)
                 for email in unread_gmails:
                     # email_subject = email.find_element(by=By.XPATH, value='//span[@class="bqe"]').text()
                     email_sender = email.find_element(by=By.XPATH, value='//span[@class="zF"]').get_attribute('email')
@@ -190,7 +193,7 @@ def send_in_loop():
         login_driver = login_to_gmail(driver=driver, index=i)
         msg_content = select_random_msg("assets/txt/First Message 200 Eng.txt")
         send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[i].strip())
-        time.sleep(10)
+        time.sleep(2)
         driver.close()
 
 
@@ -200,7 +203,7 @@ def main():
     thread_sender.join()
 
     for i in range(0, 3):
-        time.sleep(10)
+        time.sleep(2)
         threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
 
 if __name__ == '__main__':
