@@ -6,3 +6,6 @@ SMTP_SERVER = "smtp.gmail.com"
 POP3_SERVER = "pop.gmail.com"
 SMTP_INTERVAL = 30
 POP3_INTERVAL = 3
+
+PROXY_IP = "91.221.37.187"
+PROXY_PORT = 1080
