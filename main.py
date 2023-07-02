@@ -18,7 +18,7 @@ from src.utilities.select_message_for_sending import select_random_msg, read_fil
 # driver = webdriver.Chrome()
 
 sender = []
-recipients = read_file_line_by_line("./assets/txt/recipients test.txt")
+recipients = read_file_line_by_line("./assets/txt/recipients.txt")
 number_of_recipients = len(recipients)
 recipients_backup = recipients
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
@@ -31,22 +31,16 @@ total_recive = 0
 
 
 def driver_chrome_incognito():
-    chrome_options = Options()
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Disable automation detection
-    chrome_options.add_argument("--disable-infobars")  # Disable infobars
-    chrome_options.add_argument("--disable-notifications")  # Disable notifications
-    chrome_options.add_argument("--disable-popup-blocking")  # Disable popup blocking
-    chrome_options.add_argument("--disable-extensions")  # Disable extensions
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Disable /dev/shm usage
-    chrome_options.add_argument("--disable-browser-side-navigation")  # Disable browser side navigation
-    chrome_options.add_argument("--disable-gpu")  # Disable GPU acceleration
-    chrome_options.add_argument("--no-sandbox")  # Disable sandbox mode
-    chrome_options.add_argument("--ignore-certificate-errors")  # Ignore certificate errors
+    from undetected_chromedriver import Chrome, ChromeOptions
+    chrome_options = ChromeOptions()
     chrome_options.add_argument("--incognito")
-    # chrome_options.add_argument('--proxy-server={}:{}'.format(PROXY_IP, PROXY_PORT))
-    # Add any additional options as needed
+    chrome_options.add_argument('--log-level=3')
+    chrome_options.add_argument("--log-level=OFF")
+    chrome_options.set_capability("goog:loggingPrefs", {'performance': 'ALL'})
+    driver = Chrome(options=chrome_options, version_main = 114)
 
-    driver = webdriver.Chrome(options=chrome_options)
+    #driver.get("https://www.google.com")
+    # print("----------------------------------------------------------------------------------------------")
     return driver
 
 
@@ -190,7 +184,7 @@ def watch_unread_gmails(index):
         try:
             inbox_button = driver.find_element(by=By.XPATH, value="//div[@class='aio UKr6le']")
             inbox_button.click()
-            time.sleep(15)
+            time.sleep(1)
             try:
                 unread_gmails = driver.find_elements(by=By.XPATH, value="//tr[@class='zA zE']")
                 time.sleep(1)
@@ -233,7 +227,7 @@ def send_in_loop():
                         send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[random_number].strip(), is_reply="no_reply")
                         recipients_backup.remove(recipients_backup[random_number])
                         number_of_recipients = len(recipients_backup)
-                        time.sleep(30)
+                        time.sleep(1)
                         driver.close()
                     except:
                         pass
@@ -242,13 +236,15 @@ def send_in_loop():
 
 
 def main():
-    thread_sender = threading.Thread(target=send_in_loop)
-    thread_sender.start()
-    thread_sender.join()
+    # thread_sender = threading.Thread(target=send_in_loop)
+    # thread_sender.start()
+    # thread_sender.join()
+    send_in_loop()
 
-    for i in range(0, 2):
+    for i in range(0, number_of_senders):
         time.sleep(2)
-        threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
+        # threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
+        watch_unread_gmails(index=i)
 
 if __name__ == '__main__':
     main()
