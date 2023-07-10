@@ -3,6 +3,7 @@ import xlrd
 import threading, time
 import random
 import pyautogui
+import pyperclip
 
 from email.parser import Parser
 from email.message import EmailMessage
@@ -19,7 +20,7 @@ from src.utilities.select_message_for_sending import select_random_msg, read_fil
 
 sender = []
 senders = []
-recipients = read_file_line_by_line("./assets/txt/recipients test.txt")
+recipients = read_file_line_by_line("./assets/txt/recipients.txt")
 number_of_recipients = len(recipients)
 recipients_backup = recipients
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
@@ -30,6 +31,9 @@ total_sent = 0
 total_reply = 0
 total_recive = 0
 
+def copy(string):
+    pyperclip.copy(string)
+
 for i in range(0, number_of_senders):
     senders.append(i)
 
@@ -38,6 +42,7 @@ def driver_chrome_incognito():
     chrome_options = ChromeOptions()
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument('--log-level=3')
+    chrome_options.add_argument('--encoding=UTF-8')
     chrome_options.add_argument("--log-level=OFF")
     chrome_options.set_capability("goog:loggingPrefs", {'performance': 'ALL'})
     driver = Chrome(options=chrome_options, version_main = 114)
@@ -155,8 +160,11 @@ def send_mail(driver, msg_content, recipient_email, is_reply):
                 try:    
                     msg_body = driver.find_element(by=By.XPATH, value="//div[@aria-label='Message Body']")
                     time.sleep(1)
+                    # encoded_msg = msg_content.encode("utf-8")
+                    time.sleep(1)
                     ActionChains(driver=driver).move_to_element(msg_body).click().perform()
-                    ActionChains(driver=driver).send_keys(msg_content).perform()
+                    copy(msg_content)
+                    msg_body.send_keys(Keys.CONTROL + "v")
                     time.sleep(2)
                     # print("entered message")
                     try:
@@ -212,7 +220,7 @@ def watch_unread_gmails(index):
                     recipients = read_file_line_by_line("./assets/txt/recipients test.txt")
                     if email_sender.strip() + '\n' in recipients:
                         # print("This sender is in recipients!")
-                        reply_msg = select_random_msg("assets/txt/Reply Message 200 Eng.txt").split(":")[0] + " : " + select_random_msg("assets/txt/links test.txt")
+                        reply_msg = select_random_msg("assets/txt/Reply Message 200 Eng.txt").split(":")[0] + " : " + select_random_msg("assets/txt/links.txt")
                         send_mail(driver=driver, msg_content=reply_msg, recipient_email=email_sender, is_reply="reply")
                         print("------------------------------------------------->")
                         total_recive += 1

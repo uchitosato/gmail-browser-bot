@@ -70,16 +70,18 @@ def login_to_gmail(driver):
     except:
         pass
     time.sleep(1)
-    driver.get("https://aboutme.google.com")
+    # driver.get("https://aboutme.google.com")
+    driver.get("https://gmail.com")
     return driver
 
 def change_profile_picture(driver):
-    time.sleep(1)
-    profile_picture = driver.find_element(by=By.XPATH, value="//div[@class='wMR7G oGaYYd']")
-    profile_picture.click()
-    time.sleep(5)
-    pyautogui.hotkey("tab")
-    time.sleep(100)
+    # time.sleep(1)
+    # profile_picture = driver.find_element(by=By.XPATH, value="//div[@class='wMR7G oGaYYd']")
+    # profile_picture.click()
+    # time.sleep(5)
+    # pyautogui.hotkey("tab")
+    # time.sleep(100)
+    time.sleep(1000)
 
     
 

@@ -51,41 +51,43 @@ import xlrd, time, random
 # print("end!")
 # print(senders)
 
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
+# from selenium import webdriver
+# from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.common.by import By
 
-# Instantiate a ChromeDriver instance
-driver = webdriver.Chrome(ChromeDriverManager().install())
+# # Instantiate a ChromeDriver instance
+# driver = webdriver.Chrome(ChromeDriverManager().install())
 
-# Navigate to the Gmail login page
-driver.get('https://www.gmail.com')
+# # Navigate to the Gmail login page
+# driver.get('https://www.gmail.com')
 
-# Enter your Gmail account credentials
-email_input = driver.find_element(by=By.ID, value='identifierId')
-email_input.send_keys('your_email_address')
-next_button = driver.find_element(by=By.ID, value='identifierNext')
-next_button.click()
+# # Enter your Gmail account credentials
+# email_input = driver.find_element(by=By.ID, value='identifierId')
+# email_input.send_keys('your_email_address')
+# next_button = driver.find_element(by=By.ID, value='identifierNext')
+# next_button.click()
 
-password_input = driver.find_element(by=By.NAME, value='password')
-password_input.send_keys('your_password')
-password_button = driver.find_element(by=By.ID, value='passwordNext')
-password_button.click()
+# password_input = driver.find_element(by=By.NAME, value='password')
+# password_input.send_keys('your_password')
+# password_button = driver.find_element(by=By.ID, value='passwordNext')
+# password_button.click()
 
-# Click on the profile picture icon to open the profile settings menu
-profile_picture = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Ca.gbii')
-profile_picture.click()
+# # Click on the profile picture icon to open the profile settings menu
+# profile_picture = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Ca.gbii')
+# profile_picture.click()
 
-# Click on the "Change" button to upload a new profile picture
-change_button = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Da.gbii')
-change_button.click()
+# # Click on the "Change" button to upload a new profile picture
+# change_button = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Da.gbii')
+# change_button.click()
 
-# Upload the new profile picture file
-file_input = driver.find_element(by=By.NAME, value='file')
-file_input.send_keys('/path/to/your/new/profile/picture.jpg')
+# # Upload the new profile picture file
+# file_input = driver.find_element(by=By.NAME, value='file')
+# file_input.send_keys('/path/to/your/new/profile/picture.jpg')
 
-# Confirm the changes by clicking on the "Save" button
-save_button = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Ea.gbii')
-save_button.click()
+# # Confirm the changes by clicking on the "Save" button
+# save_button = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Ea.gbii')
+# save_button.click()
+l = read_file_line_by_line("./assets/gmail list usa_2.txt")
+print(len(l))
 
 
