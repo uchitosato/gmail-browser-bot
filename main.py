@@ -20,7 +20,7 @@ from src.utilities.select_message_for_sending import select_random_msg, read_fil
 
 sender = []
 senders = []
-recipients = read_file_line_by_line("./assets/txt/recipients.txt")
+recipients = read_file_line_by_line("./assets/txt/recipients_backup.txt")
 number_of_recipients = len(recipients)
 recipients_backup = recipients
 senders_file = xlrd.open_workbook("./assets/xls/50-pcs-2020-16.6.xlsx") 
@@ -233,8 +233,7 @@ def watch_unread_gmails(index):
                         continue
                     time.sleep(1)
                 # email_body = email.find_element_by_xpath('.//span[@class="y2"]').text
-        except ValueError:
-            print(ValueError)
+        except:
             # print("cannot find such class!")
             pass
     except:
@@ -293,13 +292,14 @@ def main():
     # thread_sender = threading.Thread(target=send_in_loop)
     # thread_sender.start()
     # thread_sender.join()
-    send_in_loop()
+    # send_in_loop()
     
-    # while True:
-    #     for i in senders:
-    #         time.sleep(2)
-    #         # threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
-    #         watch_unread_gmails(index=i)
+    while True:
+        for i in senders:
+            time.sleep(2)
+            index = number_of_senders - i -1
+            # threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
+            watch_unread_gmails(index=index)
 
 if __name__ == '__main__':
     main()

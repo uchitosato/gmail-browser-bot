@@ -107,7 +107,6 @@ import xlrd, time, random
 # print("Image path:", image_path)
 # print(len(file_names))
 
-for i in range(0, 10):
-    print(i)
-
-
+x  = read_file_line_by_line("total.txt")[0]
+total = int(x) + 4
+print(total)
