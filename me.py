@@ -87,7 +87,27 @@ import xlrd, time, random
 # # Confirm the changes by clicking on the "Save" button
 # save_button = driver.find_element(by=By.CSS_SELECTOR, value='.gb_Ea.gbii')
 # save_button.click()
-l = read_file_line_by_line("./assets/gmail list usa_2.txt")
-print(len(l))
+# l = read_file_line_by_line("./assets/gmail list usa_2.txt")
+# print(len(l))
+# import os
+
+# # Get the current file's directory
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# # Construct the path to the image in the assets folder
+# folder_path = "./assets/profile_picture/profile_pictures"
+# file_names = os.listdir(folder_path)
+# image_path = os.path.join(current_dir, 'assets\profile_picture\profile_pictures', file_names[random.randrange(0, len(file_names))])
+
+# first_name = select_random_msg("./assets/txt/female names.txt").strip().capitalize()
+# last_name = select_random_msg("./assets/txt/female names.txt").strip().capitalize()
+
+# print(first_name + " " + last_name)
+# # Print the image path
+# print("Image path:", image_path)
+# print(len(file_names))
+
+for i in range(0, 10):
+    print(i)
 
 

@@ -244,10 +244,12 @@ def watch_unread_gmails(index):
     driver.close()
 
 def send_in_loop():
+    recipient_index = 0
     while True:
         number_of_recipients = len(recipients_backup)
         number_of_senders_backup = len(senders)
-        number_of_loop = int(number_of_recipients / number_of_senders_backup)
+        # number_of_loop = int(number_of_recipients / number_of_senders_backup)
+        number_of_loop = 200
         try:
             if number_of_recipients == 0:
                 break
@@ -258,10 +260,12 @@ def send_in_loop():
                     login_driver = login_to_gmail(driver=driver, index=i, status="sending")
                     msg_content = select_random_msg("assets/txt/First Message 200 Eng.txt")
                     random_number = random.randrange(0, number_of_recipients)
-                    send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[random_number].strip(), is_reply="no_reply")
-                    recipients_backup.remove(recipients_backup[random_number])
+                    send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[recipient_index].strip(), is_reply="no_reply")
+                    recipients_backup.remove(recipients_backup[recipient_index])
                     number_of_recipients = len(recipients_backup)
+                    recipient_index += 1
                     time.sleep(1)
+                driver.close()
             else:
                 for i in senders:
                     driver = driver_chrome_incognito()
@@ -270,11 +274,12 @@ def send_in_loop():
                     for j in range(0, number_of_loop):
                         msg_content = select_random_msg("assets/txt/First Message 200 Eng.txt")
                         try:
-                            random_number = random.randrange(0, number_of_recipients)
-                            send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[random_number].strip(), is_reply="no_reply")
-                            recipients_backup.remove(recipients_backup[random_number])
+                            recipient_index = random.randrange(0, number_of_recipients)
+                            send_mail(driver=login_driver, msg_content=msg_content, recipient_email=recipients[recipient_index].strip(), is_reply="no_reply")
+                            recipients_backup.remove(recipients_backup[recipient_index])
                             number_of_recipients = len(recipients_backup)
                             time.sleep(1)
+                            recipient_index += 1
                         except:
                             pass
                     driver.close()
@@ -290,11 +295,11 @@ def main():
     # thread_sender.join()
     send_in_loop()
     
-    while True:
-        for i in senders:
-            time.sleep(2)
-            # threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
-            watch_unread_gmails(index=i)
+    # while True:
+    #     for i in senders:
+    #         time.sleep(2)
+    #         # threading.Thread(target=lambda:watch_unread_gmails(index=i)).start()
+    #         watch_unread_gmails(index=i)
 
 if __name__ == '__main__':
     main()
