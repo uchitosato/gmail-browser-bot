@@ -47,3 +47,18 @@ def select_random_msg(file):
           final_msg += components[random.randrange(0, components_length)]
       final_msg += tmp_msg[ends[len(starts)-1] + 1:]
   return final_msg
+
+def update_file(file_path, line_number):
+    # Read all lines from the file
+    lines = read_file_line_by_line(file_path)
+
+    # Remove the line at the specified line number
+    if line_number < 1 or line_number > len(lines):
+        print("Invalid line number")
+        return
+
+    del lines[line_number - 1]
+
+    # Write the updated lines back to the file
+    with open(file_path, 'w') as file:
+        file.writelines(lines)
