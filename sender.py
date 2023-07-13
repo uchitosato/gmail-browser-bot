@@ -13,6 +13,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from src.utilities.constants import PROXY_IP, PROXY_PORT, RECIPIENT_ADDRESS, SMTP_SERVER, SMTP_INTERVAL, POP3_SERVER, POP3_INTERVAL
 from src.utilities.select_message_for_sending import select_random_msg, read_file_line_by_line, update_file
@@ -44,42 +46,35 @@ def driver_chrome_incognito():
 
 def login_to_gmail(driver, email, password, recovery_email):
     driver.get("https://gmail.com")
-    time.sleep(1)
+
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.NAME, "identifier")))
+    input_email = driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
+    email_next = driver.find_element(by=By.ID, value="identifierNext")
+    input_email.send_keys(email)
+    email_next.click()
+    time.sleep(2)
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.NAME, "Passwd")))
+    input_password = driver.find_element(by=By.NAME, value="Passwd")
+    password_Next = driver.find_element(by=By.ID, value="passwordNext")
+    ActionChains(driver=driver).move_to_element(input_password).click().send_keys(password).perform()
+    ActionChains(driver=driver).move_to_element(password_Next).click().perform()
+    time.sleep(2)
     try:
-        input_email = driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
-        email_next = driver.find_element(by=By.ID, value="identifierNext")
-        time.sleep(1)
-        input_email.send_keys(email)
-        time.sleep(1)
-        email_next.click()
+        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//div[@data-challengeindex='2']")))
+        confirm_recovery_email = driver.find_element(by=By.XPATH, value="//div[@data-challengeindex='2']")
+        confirm_recovery_email.click()
         time.sleep(2)
         try:
-            input_password = driver.find_element(by=By.NAME, value="Passwd")
-            time.sleep(1)
-            password_Next = driver.find_element(by=By.ID, value="passwordNext")
-            time.sleep(1)
-            input_password.send_keys(password)
-            time.sleep(1)
-            password_Next.click()
-            time.sleep(1)
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "knowledge-preregistered-email-response")))
+            input_recovery_email = driver.find_element(by=By.ID, value="knowledge-preregistered-email-response")
+            input_recovery_email.send_keys(recovery_email)
+            input_recovery_email.send_keys(Keys.ENTER)
+            time.sleep(2)
             try:
-                confirm_recovery_email = driver.find_element(by=By.XPATH, value="//div[@data-challengeindex='2']")
-                time.sleep(1)
-                confirm_recovery_email.click()
-                time.sleep(1)
-                try:
-                    input_recovery_email = driver.find_element(by=By.ID, value="knowledge-preregistered-email-response")
-                    input_recovery_email.send_keys(recovery_email)
-                    input_recovery_email.send_keys(Keys.ENTER)
-                    time.sleep(1)
-                    try:
-                        not_now_button = driver.find_element(by=By.TAG_NAME, value="button")
-                        not_now_button.click()
-                        time.sleep(1)
-                    except:
-                        pass
-                except:
-                    print("Cannot find element 'input_recovery_email'")
+                WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "button")))
+                not_now_button = driver.find_element(by=By.TAG_NAME, value="button")
+                not_now_button.click()
+                time.sleep(2)
             except:
                 pass
         except:
@@ -89,8 +84,6 @@ def login_to_gmail(driver, email, password, recovery_email):
     return driver
 
 def send_mail(driver, msg_content, recipient_email):  
-    global total_sent
-    global total_reply
     try:
         driver.find_element(by=By.XPATH, value="//div[@class='T-I T-I-KE L3']").click()
         time.sleep(1)
@@ -167,7 +160,7 @@ def send_in_loop():
                     total_sent += 1
                 with open(url_total_sent, "w", encoding="utf-8") as total:
                     total.write(format(total_sent))
-            login.close()
+            Driver.close()
 
 
     print("Sent to all recipients!")
